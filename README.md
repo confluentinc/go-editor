@@ -40,7 +40,7 @@ If you would like to validate the edited data, use a `ValidatingEditor` instead:
 A schema is any object that implements the [Schema](./interfaces.go) interface.
 This interface has a single method, `ValidateBytes([]byte) error`.
 
-You can see an example schema and validating editor in [examples/validating.go](./examples/validating.go)
+You can see an example schema and validating editor in [examples/validating.go](./examples/validating.go).
 
 Happy editing!
 

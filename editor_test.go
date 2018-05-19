@@ -9,7 +9,7 @@ import (
 )
 
 func TestLaunchTempFile(t *testing.T) {
-	editor := Editor{command: "cat"}
+	editor := BasicEditor{Command: "cat"}
 	expected := "something to be edited\n"
 
 	contents, path, err := editor.LaunchTempFile("prefix", bytes.NewBufferString(expected))

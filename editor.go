@@ -23,22 +23,22 @@ func init() {
 	}
 }
 
-type Editor struct {
-	command string
+type BasicEditor struct {
+	Command string
 }
 
-// NewEditor creates an Editor with the users preferred text editor. The editor
+// NewEditor creates an BasicEditor with the users preferred text editor. The editor
 // to use is determined by reading the $VISUAL and $EDITOR environment variables.
 // If neither of these are present, vim or notepad (on Windows) is used.
-func NewEditor() *Editor {
-	return &Editor{
-		command: editor,
+func NewEditor() *BasicEditor {
+	return &BasicEditor{
+		Command: editor,
 	}
 }
 
 // Launch opens the given file path in the external editor or returns an error.
-func (e *Editor) Launch(path string) error {
-	cmd := exec.Command(e.command, path)
+func (e *BasicEditor) Launch(path string) error {
+	cmd := exec.Command(e.Command, path)
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
@@ -52,7 +52,7 @@ func (e *Editor) Launch(path string) error {
 // initialized with contents from the provided stream and named with the given
 // prefix. Returns the modified data and the path to the temporary file so the
 // caller can clean it up, or an error.
-func (e *Editor) LaunchTempFile(prefix string, r io.Reader) ([]byte, string, error) {
+func (e *BasicEditor) LaunchTempFile(prefix string, r io.Reader) ([]byte, string, error) {
 	f, err := ioutil.TempFile("", prefix)
 	if err != nil {
 		return nil, "", err

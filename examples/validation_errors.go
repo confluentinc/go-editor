@@ -2,11 +2,11 @@ package main
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"os"
 
 	"github.com/codyaray/go-editor"
-	"encoding/json"
 )
 
 type validationError struct {
@@ -31,6 +31,7 @@ func (e *validationError) IsEmpty() bool {
 }
 
 type Format string
+
 const FormatJSON = "json"
 
 // Example schema that expects a known format and specific set of field keys
@@ -69,7 +70,7 @@ func main() {
 	schema := &keyedSchema{format: "json", fields: []string{"key1", "key2", "key3"}}
 	edit := editor.NewValidatingEditor(schema)
 
-	obj := bytes.NewBufferString(`{"key1":1, "key1":2, "key1":3}`+"\n")
+	obj := bytes.NewBufferString(`{"key1":1, "key1":2, "key1":3}` + "\n")
 
 	contents, file, err := edit.LaunchTempFile("example", obj)
 	defer os.Remove(file)

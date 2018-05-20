@@ -25,7 +25,7 @@ func init() {
 
 // BasicEditor launches an editor given by a specific command.
 type BasicEditor struct {
-	Command  string
+	Command string
 	// this is only for testing
 	LaunchFn func(command, file string) error
 }

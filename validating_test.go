@@ -43,12 +43,13 @@ func TestValidatingEditor_LaunchTempFile(t *testing.T) {
 		edited   []string
 	}
 	tests := []struct {
-		name     string
-		fields   fields
-		args     args
-		wantData string
-		wantFile bool
-		wantErr  string
+		name          string
+		fields        fields
+		args          args
+		wantData      string
+		wantFile      bool
+		wantErr       string
+		wantPreserved bool
 	}{
 		{
 			name: "cancel on original unchanged",
@@ -59,9 +60,10 @@ func TestValidatingEditor_LaunchTempFile(t *testing.T) {
 				original: "original data",
 				edited:   []string{"original data"},
 			},
-			wantData: "",
-			wantFile: false,
-			wantErr:  msgCancelledNoOrigChanges,
+			wantData:      "",
+			wantFile:      false,
+			wantErr:       msgCancelledNoOrigChanges,
+			wantPreserved: false,
 		},
 		{
 			name: "cancel on invalid edit and then unchanged edit",
@@ -72,9 +74,10 @@ func TestValidatingEditor_LaunchTempFile(t *testing.T) {
 				original: "original data",
 				edited:   []string{"invalid data", "invalid data"},
 			},
-			wantData: "invalid data",
-			wantFile: true,
-			wantErr:  "invalid " + msgCancelledNoValidChanges,
+			wantData:      "invalid data",
+			wantFile:      true,
+			wantErr:       "invalid " + msgCancelledNoValidChanges,
+			wantPreserved: true,
 		},
 		{
 			name: "cancel on invalid edit, different invalid edit, and then unchanged edit",
@@ -85,9 +88,10 @@ func TestValidatingEditor_LaunchTempFile(t *testing.T) {
 				original: "original data",
 				edited:   []string{"invalid data", "more invalid data", "more invalid data"},
 			},
-			wantData: "more invalid data",
-			wantFile: true,
-			wantErr:  "invalid " + msgCancelledNoValidChanges,
+			wantData:      "more invalid data",
+			wantFile:      true,
+			wantErr:       "invalid " + msgCancelledNoValidChanges,
+			wantPreserved: true,
 		},
 		{
 			name: "cancel on empty file",
@@ -98,9 +102,10 @@ func TestValidatingEditor_LaunchTempFile(t *testing.T) {
 				original: "original data",
 				edited:   []string{"invalid data", ""},
 			},
-			wantData: "",
-			wantFile: false,
-			wantErr:  msgCancelledEmptyFile,
+			wantData:      "",
+			wantFile:      false,
+			wantErr:       msgCancelledEmptyFile,
+			wantPreserved: false,
 		},
 		{
 			name: "cancel on invalid edit, and then empty file",
@@ -111,9 +116,10 @@ func TestValidatingEditor_LaunchTempFile(t *testing.T) {
 				original: "original data",
 				edited:   []string{"invalid data", "more invalid data", ""},
 			},
-			wantData: "",
-			wantFile: false,
-			wantErr:  msgCancelledEmptyFile,
+			wantData:      "",
+			wantFile:      false,
+			wantErr:       msgCancelledEmptyFile,
+			wantPreserved: false,
 		},
 		{
 			name: "cancel on comment-only file",
@@ -122,11 +128,12 @@ func TestValidatingEditor_LaunchTempFile(t *testing.T) {
 			},
 			args: args{
 				original: "original data",
-				edited:   []string{"invalid data", "# foo\n  # world\n \t\r\n"},
+				edited:   []string{"invalid data", "# effectively\n  # empty \n \t\r\n"},
 			},
-			wantData: "",
-			wantFile: false,
-			wantErr:  msgCancelledEmptyFile,
+			wantData:      "",
+			wantFile:      false,
+			wantErr:       msgCancelledEmptyFile,
+			wantPreserved: false,
 		},
 		{
 			name: "successful edit on first try",
@@ -137,9 +144,10 @@ func TestValidatingEditor_LaunchTempFile(t *testing.T) {
 				original: "original data",
 				edited:   []string{"new data"},
 			},
-			wantData: "new data",
-			wantFile: true,
-			wantErr:  "",
+			wantData:      "new data",
+			wantFile:      true,
+			wantErr:       "",
+			wantPreserved: false,
 		},
 		{
 			name: "successful edit on third try",
@@ -156,16 +164,21 @@ func TestValidatingEditor_LaunchTempFile(t *testing.T) {
 				original: "original data",
 				edited:   []string{"invalid data", "more invalid data", "new data"},
 			},
-			wantData: "new data",
-			wantFile: true,
-			wantErr:  msgCancelledEmptyFile,
+			wantData:      "new data",
+			wantFile:      true,
+			wantErr:       msgCancelledEmptyFile,
+			wantPreserved: false,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			e := NewValidatingEditor(tt.fields.Schema)
 			e.InvalidFn = func(e error) error { return fmt.Errorf("%s %s", e.Error(), msgCancelledNoValidChanges) }
-			e.PreserveFileFn = func(data []byte, file string, err error) ([]byte, string, error) { return data, file, err }
+			preserved := false
+			e.PreserveFileFn = func(data []byte, file string, err error) ([]byte, string, error) {
+				preserved = true
+				return data, file, err
+			}
 			editCount := 0
 			e.LaunchFn = func(command, file string) error {
 				if editCount >= len(tt.args.edited) {
@@ -188,6 +201,9 @@ func TestValidatingEditor_LaunchTempFile(t *testing.T) {
 			}
 			if editCount != len(tt.args.edited) {
 				t.Errorf("ValidatingEditor.LaunchTempFile() editCount = %v, wantEditCount %v", editCount, len(tt.args.edited))
+			}
+			if preserved != tt.wantPreserved {
+				t.Errorf("ValidatingEditor.LaunchTempFile() preserved = %v, wantPreserved %v", preserved, tt.wantPreserved)
 			}
 		})
 	}

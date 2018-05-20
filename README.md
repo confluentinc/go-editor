@@ -1,6 +1,7 @@
 # go-editor
 
 [![Build Status](https://semaphoreci.com/api/v1/codyaray/go-editor/branches/master/shields_badge.svg)](https://semaphoreci.com/codyaray/go-editor)
+![Release](release.svg)
 [![codecov](https://codecov.io/gh/codyaray/go-editor/branch/master/graph/badge.svg)](https://codecov.io/gh/codyaray/go-editor)
 [![GoDoc](https://godoc.org/github.com/codyaray/go-editor?status.svg)](https://godoc.org/github.com/codyaray/go-editor)
 
@@ -32,7 +33,7 @@ The library leaves it up to you to cleanup the temp file. For example, this
 allows your CLI to validate the edited data and prompt the user to continue
 editing where they left off, rather than starting their changes over.
 
-You can see a working example in [examples/simple.go](./examples/simple.go).
+You can see working examples in the [examples](./examples) directory.
 
 ### Input Validation
 
@@ -44,7 +45,7 @@ If you would like to validate the edited data, use a `ValidatingEditor` instead:
 A schema is any object that implements the [Schema](./interfaces.go) interface.
 This interface has a single method, `ValidateBytes([]byte) error`.
 
-You can see an example schema and validating editor in [examples/validating.go](./examples/validating.go).
+You can see working examples in the [examples](./examples) directory.
 
 Happy editing!
 

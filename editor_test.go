@@ -2,49 +2,93 @@ package editor
 
 import (
 	"bytes"
+	"fmt"
+	"io"
 	"io/ioutil"
 	"os"
 	"strings"
 	"testing"
 )
 
-func TestLaunchTempFile(t *testing.T) {
-	editor := NewEditor()
-
-	expected := "something to be edited\n"
-
-	// Simulate user making changes
-	editor.LaunchFn = func(command, file string) error {
-		return ioutil.WriteFile(file, []byte(expected), 0777)
+func TestBasicEditor_LaunchTempFile(t *testing.T) {
+	type fields struct {
+		Command  string
+		LaunchFn func(command, file string) error
 	}
-
-	contents, file, err := editor.LaunchTempFile("prefix", bytes.NewBufferString(expected))
-	if err != nil {
-		t.Fatalf("error launching temp file: %v", err)
+	type args struct {
+		prefix   string
+		original io.Reader
 	}
-
-	// check if temp file still exists
-	if _, err := os.Stat(file); os.IsNotExist(err) {
-		t.Fatalf("temp file doesn't exist: %s", file)
+	tests := []struct {
+		name     string
+		fields   fields
+		args     args
+		wantData []byte
+		wantFile bool
+		wantErr  bool
+		wantDisk []byte
+	}{
+		{
+			name: "successful launch",
+			fields: fields{
+				LaunchFn: func(command, file string) error { return nil },
+			},
+			args: args{
+				prefix:   "prefix",
+				original: bytes.NewBufferString("some random text"),
+			},
+			wantData: []byte("some random text"),
+			wantFile: true,
+			wantErr:  false,
+			wantDisk: []byte("some random text"),
+		},
+		{
+			name: "failed launch",
+			fields: fields{
+				LaunchFn: func(command, file string) error { return fmt.Errorf("failure to launch") },
+			},
+			args: args{
+				prefix:   "prefix",
+				original: bytes.NewBufferString("some random text"),
+			},
+			wantData: []byte{},
+			wantFile: true,
+			wantErr:  true,
+			wantDisk: []byte("some random text"),
+		},
 	}
-	defer os.Remove(file)
-
-	// check if filename is as expected
-	if !strings.Contains(file, "prefix") {
-		t.Errorf("filename doesn't contain prefix: %s", file)
-	}
-
-	// check if returned contents are as expected
-	if string(contents) != expected {
-		t.Errorf("returned contents don't match: %s", string(contents))
-	}
-
-	// check if temp file contents are as expected
-	actual, err := ioutil.ReadFile(file)
-	if err != nil {
-		t.Errorf("unable to read temp file: %s", file)
-	}
-	if string(actual) != expected {
-		t.Errorf("temp file contents don't match: %s", string(actual))
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			e := NewEditor()
+			e.Command = tt.fields.Command
+			e.LaunchFn = tt.fields.LaunchFn
+			data, file, err := e.LaunchTempFile(tt.args.prefix, tt.args.original)
+			defer os.Remove(file)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("BasicEditor.LaunchTempFile() error = %v, wantErr %v", err, tt.wantErr)
+			}
+			if !bytes.Equal(data, tt.wantData) {
+				t.Errorf("BasicEditor.LaunchTempFile() data = '%v', wantData '%v'", string(data), string(tt.wantData))
+			}
+			if (file != "") != tt.wantFile {
+				t.Errorf("BasicEditor.LaunchTempFile() file = %v, wantFile %v", file, tt.wantFile)
+				return
+			}
+			if file != "" {
+				if _, err := os.Stat(file); os.IsNotExist(err) {
+					t.Fatalf("BasicEditor.LaunchTempFile() temp file doesn't exist: %s", file)
+				}
+				if !strings.Contains(file, tt.args.prefix) {
+					t.Errorf("BasicEditor.LaunchTempFile() file = %v, wantPrefix = %v", file, tt.args.prefix)
+				}
+				actual, err := ioutil.ReadFile(file)
+				if err != nil {
+					t.Errorf("BasicEditor.LaunchTempFile() unable to read temp file: %s", file)
+				}
+				if !bytes.Equal(actual, tt.wantDisk) {
+					t.Errorf("BasicEditor.LaunchTempFile() disk = '%v', wantData '%v'", string(actual), string(tt.wantDisk))
+				}
+			}
+		})
 	}
 }

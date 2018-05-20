@@ -1,3 +1,6 @@
+deps:
+	@which golint 2>/dev/null || go get -u github.com/golang/lint/golint
+
 test:
 	@gofmt -w .
 	@golint -set_exit_status ./...

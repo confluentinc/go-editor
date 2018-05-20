@@ -9,8 +9,14 @@ import (
 )
 
 func TestLaunchTempFile(t *testing.T) {
-	editor := BasicEditor{Command: "cat"}
+	editor := NewEditor()
+
 	expected := "something to be edited\n"
+
+	// Simulate user making changes
+	editor.LaunchFn = func(command, file string) error {
+		return ioutil.WriteFile(file, []byte(expected), 0777)
+	}
 
 	contents, file, err := editor.LaunchTempFile("prefix", bytes.NewBufferString(expected))
 	if err != nil {

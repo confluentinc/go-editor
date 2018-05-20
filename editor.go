@@ -25,7 +25,9 @@ func init() {
 
 // BasicEditor launches an editor given by a specific command.
 type BasicEditor struct {
-	Command string
+	Command  string
+	// this is only for testing
+	LaunchFn func(command, file string) error
 }
 
 // NewEditor launches an instance of the users preferred editor. The editor
@@ -33,13 +35,25 @@ type BasicEditor struct {
 // If neither of these are present, vim or notepad (on Windows) is used.
 func NewEditor() *BasicEditor {
 	return &BasicEditor{
-		Command: editor,
+		Command:  editor,
+		LaunchFn: launch,
+	}
+}
+
+func (e *BasicEditor) Clone() *BasicEditor {
+	return &BasicEditor{
+		Command:  e.Command,
+		LaunchFn: e.LaunchFn,
 	}
 }
 
 // Launch opens the given file path in the external editor or returns an error.
 func (e *BasicEditor) Launch(file string) error {
-	cmd := exec.Command(e.Command, file)
+	return e.LaunchFn(e.Command, file)
+}
+
+func launch(command, file string) error {
+	cmd := exec.Command(command, file)
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr

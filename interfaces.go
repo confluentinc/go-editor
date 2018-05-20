@@ -1,13 +1,5 @@
 package editor
 
-import "io"
-
-// Editor launches an instance of the users preferred editor.
-type Editor interface {
-	Launch(file string) error
-	LaunchTempFile(prefix string, r io.Reader) ([]byte, string, error)
-}
-
 // Schema is an interface for validating data.
 type Schema interface {
 	ValidateBytes(data []byte) error

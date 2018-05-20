@@ -40,7 +40,7 @@ func NewEditor() *BasicEditor {
 	}
 }
 
-func (e *BasicEditor) Clone() *BasicEditor {
+func (e *BasicEditor) clone() *BasicEditor {
 	return &BasicEditor{
 		Command:  e.Command,
 		LaunchFn: e.LaunchFn,

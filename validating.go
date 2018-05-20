@@ -78,7 +78,7 @@ func NewValidatingEditor(schema Schema) *ValidatingEditor {
 // The last byte of "obj" must be a newline to cancel editing if no changes are made.
 // (This is because many editors like vim automatically add a newline when saving.)
 func (e *ValidatingEditor) LaunchTempFile(prefix string, obj io.Reader) ([]byte, string, error) {
-	editor := e.BasicEditor.Clone()
+	editor := e.BasicEditor.clone()
 
 	var (
 		prevErr  error

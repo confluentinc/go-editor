@@ -30,13 +30,13 @@ func (e *validationError) IsEmpty() bool {
 	return len(e.errors) == 0
 }
 
-type Format string
+type format string
 
-const FormatJSON = "json"
+const formatJSON = "json"
 
 // Example schema that expects a known format and specific set of field keys
 type keyedSchema struct {
-	format Format
+	format format
 	fields []string
 }
 
@@ -45,7 +45,7 @@ func (s *keyedSchema) ValidateBytes(data []byte) error {
 	ve := &validationError{}
 
 	switch s.format {
-	case FormatJSON:
+	case formatJSON:
 		err := json.Unmarshal(data, &obj)
 		if err != nil {
 			return ve.Add(fmt.Errorf("data cannot be unmarshalled as JSON: %v", err))
@@ -67,7 +67,7 @@ func (s *keyedSchema) ValidateBytes(data []byte) error {
 }
 
 func main() {
-	schema := &keyedSchema{format: "json", fields: []string{"key1", "key2", "key3"}}
+	schema := &keyedSchema{format: formatJSON, fields: []string{"key1", "key2", "key3"}}
 	edit := editor.NewValidatingEditor(schema)
 
 	obj := bytes.NewBufferString(`{"key1":1, "key1":2, "key1":3}` + "\n")

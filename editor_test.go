@@ -56,12 +56,28 @@ func TestBasicEditor_LaunchTempFile(t *testing.T) {
 			wantErr:  true,
 			wantDisk: []byte("some random text"),
 		},
+		{
+			name: "execs command",
+			fields: fields{
+				Command: "cat",
+			},
+			args: args{
+				prefix:   "prefix",
+				original: bytes.NewBufferString("some random text\n"),
+			},
+			wantData: []byte("some random text\n"),
+			wantFile: true,
+			wantErr:  false,
+			wantDisk: []byte("some random text\n"),
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			e := NewEditor()
 			e.Command = tt.fields.Command
-			e.LaunchFn = tt.fields.LaunchFn
+			if tt.fields.LaunchFn != nil {
+				e.LaunchFn = tt.fields.LaunchFn
+			}
 			data, file, err := e.LaunchTempFile(tt.args.prefix, tt.args.original)
 			defer os.Remove(file)
 			if (err != nil) != tt.wantErr {

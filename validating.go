@@ -33,7 +33,7 @@ var (
 // ValidatingEditor is an Editor which validates data against a schema. This will
 // prompt the user to continue editing until validation succeeds or the edit is cancelled.
 type ValidatingEditor struct {
-	BasicEditor
+	*BasicEditor
 
 	// Schema is used to validate the edited data.
 	Schema Schema
@@ -56,7 +56,7 @@ type ValidatingEditor struct {
 // This extends the BasicEditor with schema validation capabilities.
 func NewValidatingEditor(schema Schema) *ValidatingEditor {
 	return &ValidatingEditor{
-		BasicEditor:         BasicEditor{Command: editor},
+		BasicEditor:         NewEditor(),
 		Schema:              schema,
 		InvalidFn:           defaultInvalidFn,
 		OriginalUnchangedFn: defaultNoChangesFn,

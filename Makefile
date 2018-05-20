@@ -75,12 +75,12 @@ coverage:
 	  fi; \
 	done
       else
-	@go test -race $(TEST_ARGS) ./...
+	@go test -race -cover $(TEST_ARGS) ./...
       endif
 
 test:
 	@gofmt -w .
-	@golint -set_exit_status ./...
+	@golint -set_exit_status `go list ./... | grep -v /vendor/`
 	@go vet ./...
 	@make coverage
 

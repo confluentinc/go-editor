@@ -28,7 +28,6 @@ Provide any "io.Reader" with the initial contents:
 	    // handle it
 	}
 
-
 The library leaves it up to you to cleanup the temp file.
 
 This enables your CLI to validate the edited data and prompt the user to

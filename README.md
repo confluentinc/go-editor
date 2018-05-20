@@ -15,7 +15,19 @@ Just like editing messages in `git commit` or resources with `kubectl edit`.
 
 ## Usage
 
-### Basic Usage
+### Existing File
+
+The most basic usage is to prompt the user to edit an existing file. This may
+be useful to edit the application configuration or a system file, for example.
+
+    edit := editor.NewEditor()
+    err := edit.Launch("/etc/bashrc")
+
+### Arbitrary Data
+
+Most of the time, the data you want your user to edit isn't in an local file.
+In these cases, if you can represent your data in a human editable format
+(txt, yaml, hcl, json, etc), then go-editor will enable the user to edit it.
 
 Provide any `io.Reader` with the initial contents:
 
@@ -29,15 +41,19 @@ Provide any `io.Reader` with the initial contents:
 	}
 
 
-The library leaves it up to you to cleanup the temp file. For example, this
-allows your CLI to validate the edited data and prompt the user to continue
-editing where they left off, rather than starting their changes over.
+The library leaves it up to you to cleanup the temp file.
 
-You can see working examples in the [examples](./examples) directory.
+This enables your CLI to validate the edited data and prompt the user to
+continue editing where they left off, rather than starting over. And if
+that's what you want...
 
 ### Input Validation
 
-If you would like to validate the edited data, use a `ValidatingEditor` instead:
+If you would like to validate the edited data, use a ValidatingEditor instead.
+This will prompt the user to continue editing until validation succeeds or
+the edit is cancelled.
+
+Simply create a schema and pass it to the editor:
 
     schema := &mySchema{}
     edit := editor.NewValidatingEditor(schema)

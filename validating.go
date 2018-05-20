@@ -23,54 +23,59 @@ var (
 	}
 	defaultNoChangesFn    = func() (bool, error) { return true, fmt.Errorf(msgCancelledNoOrigChanges) }
 	defaultEmptyFileFn    = func() (bool, error) { return true, fmt.Errorf(msgCancelledEmptyFile) }
-	defaultPreserveFileFn = func(data []byte, path string, err error) ([]byte, string, error) {
-		fmt.Printf(msgPreserveFileLocation, path)
-		return data, path, err
+	defaultPreserveFileFn = func(data []byte, file string, err error) ([]byte, string, error) {
+		fmt.Printf(msgPreserveFileLocation, file)
+		return data, file, err
 	}
 	defaultCommentChars = []string{"#", "//"}
 )
 
-// ValidatingEditor is an Editor which validates edited data and retries invalid edits until successful or canceled.
+// ValidatingEditor is an Editor which validates data against a schema. This will
+// prompt the user to continue editing until validation succeeds or the edit is cancelled.
 type ValidatingEditor struct {
 	BasicEditor
 
-	// Schema is used to validate the edited data
+	// Schema is used to validate the edited data.
 	Schema Schema
 
-	// InvalidFn is called when a Schema fails to validate data
+	// InvalidFn is called when a Schema fails to validate data.
 	InvalidFn ValidationFailedFn
-	// OriginalNoChangesFn is called when no changes were made from the original
-	OriginalNoChangesFn CancelEditingFn
-	// EmptyFileFn is called when the edited data is (effectively) empty; this means the file doesn't have any uncommented lines (ignoring whitespace)
+	// OriginalUnchangedFn is called when no changes were made from the original data.
+	OriginalUnchangedFn CancelEditingFn
+	// EmptyFileFn is called when the edited data is (effectively) empty; the file doesn't have any uncommented lines (ignoring whitespace)
 	EmptyFileFn CancelEditingFn
-	// PreserveFileFn is called when a non-recoverable error has occurred to give you the chance to inform the user that their edits have been preserved and where to find them
+	// PreserveFileFn is called when a non-recoverable error has occurred and the users edits have been preserved in a temp file.
 	PreserveFileFn PreserveFileFn
 
-	// CommentChars is a list of comment string prefixes and defaults to "#" and "//"
+	// CommentChars is a list of comment string prefixes for determining "empty" files. Defaults to "#" and "//".
 	CommentChars []string
 }
 
-// NewValidatingEditor creates an ValidatingEditor with the users preferred text editor.
-// The editor to use is determined by reading the $VISUAL and $EDITOR environment variables.
-// If neither of these are present, vim or notepad (on Windows) is used.
+// NewValidatingEditor returns a new ValidatingEditor.
+//
+// This extends the BasicEditor with schema validation capabilities.
 func NewValidatingEditor(schema Schema) *ValidatingEditor {
 	return &ValidatingEditor{
 		BasicEditor:         BasicEditor{Command: editor},
 		Schema:              schema,
 		InvalidFn:           defaultInvalidFn,
-		OriginalNoChangesFn: defaultNoChangesFn,
+		OriginalUnchangedFn: defaultNoChangesFn,
 		EmptyFileFn:         defaultEmptyFileFn,
 		PreserveFileFn:      defaultPreserveFileFn,
 		CommentChars:        defaultCommentChars,
 	}
 }
 
-// LaunchTempFile launches the users preferred editor on a temporary file
-// initialized with contents from the provided stream and named with the given
-// prefix. Returns the modified data and the path to the temporary file so the
-// caller can clean it up, or an error.
+// LaunchTempFile launches the users preferred editor on a temporary file.
+// This file is initialized with contents from the provided stream and named
+// with the given prefix.
 //
-// The last byte of `obj` must be a newline to cancel editing if no changes are made.
+// Returns the modified data, the path to the temporary file so the caller can
+// clean it up, and an error.
+//
+// A file may be present even when an error is returned. Please clean it up.
+//
+// The last byte of "obj" must be a newline to cancel editing if no changes are made.
 // (This is because many editors like vim automatically add a newline when saving.)
 func (e *ValidatingEditor) LaunchTempFile(prefix string, obj io.Reader) ([]byte, string, error) {
 	editor := NewEditor()
@@ -114,7 +119,7 @@ func (e *ValidatingEditor) LaunchTempFile(prefix string, obj io.Reader) ([]byte,
 
 		// Compare contents for changes
 		if bytes.Equal(original, edited) {
-			cancel, err := e.OriginalNoChangesFn()
+			cancel, err := e.OriginalUnchangedFn()
 			if cancel {
 				os.Remove(file)
 				return nil, "", err

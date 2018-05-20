@@ -1,5 +1,7 @@
 # go-editor
 
+[![GoDoc](https://godoc.org/github.com/codyaray/go-editor?status.svg)](https://godoc.org/github.com/codyaray/go-editor)
+
 Allow your CLI users to edit arbitrary data in their preferred editor.
 
 Just like editing messages in `git commit` or resources with `kubectl edit`.

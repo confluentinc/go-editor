@@ -12,20 +12,20 @@ func TestLaunchTempFile(t *testing.T) {
 	editor := BasicEditor{Command: "cat"}
 	expected := "something to be edited\n"
 
-	contents, path, err := editor.LaunchTempFile("prefix", bytes.NewBufferString(expected))
+	contents, file, err := editor.LaunchTempFile("prefix", bytes.NewBufferString(expected))
 	if err != nil {
 		t.Fatalf("error launching temp file: %v", err)
 	}
 
 	// check if temp file still exists
-	if _, err := os.Stat(path); os.IsNotExist(err) {
-		t.Fatalf("temp file doesn't exist: %s", path)
+	if _, err := os.Stat(file); os.IsNotExist(err) {
+		t.Fatalf("temp file doesn't exist: %s", file)
 	}
-	defer os.Remove(path)
+	defer os.Remove(file)
 
 	// check if filename is as expected
-	if !strings.Contains(path, "prefix") {
-		t.Errorf("filename doesn't contain prefix: %s", path)
+	if !strings.Contains(file, "prefix") {
+		t.Errorf("filename doesn't contain prefix: %s", file)
 	}
 
 	// check if returned contents are as expected
@@ -34,9 +34,9 @@ func TestLaunchTempFile(t *testing.T) {
 	}
 
 	// check if temp file contents are as expected
-	actual, err := ioutil.ReadFile(path)
+	actual, err := ioutil.ReadFile(file)
 	if err != nil {
-		t.Errorf("unable to read temp file: %s", path)
+		t.Errorf("unable to read temp file: %s", file)
 	}
 	if string(actual) != expected {
 		t.Errorf("temp file contents don't match: %s", string(actual))

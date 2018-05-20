@@ -26,8 +26,8 @@ func main() {
 
 	obj := bytes.NewBufferString("something to be edited\n")
 
-	contents, path, err := edit.LaunchTempFile("example", obj)
-	defer os.Remove(path)
+	contents, file, err := edit.LaunchTempFile("example", obj)
+	defer os.Remove(file)
 	if err != nil {
 		fmt.Println("error: " + err.Error())
 		os.Exit(1)

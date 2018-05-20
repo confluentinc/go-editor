@@ -11,19 +11,20 @@ import (
 )
 
 var (
-	ErrValidationFailed        = fmt.Errorf("The edited file failed validation")
-	ErrCancelledNoValidChanges = fmt.Errorf("Edit cancelled, no valid changes were saved.")
-	ErrCancelledNoOrigChanges  = fmt.Errorf("Edit cancelled, no changes made.")
-	ErrCancelledEmptyFile      = fmt.Errorf("Edit cancelled, saved file was empty.")
+	msgValidationFailed        = "The edited file failed validation"
+	msgCancelledNoValidChanges = "Edit cancelled, no valid changes were saved."
+	msgCancelledNoOrigChanges  = "Edit cancelled, no changes made."
+	msgCancelledEmptyFile      = "Edit cancelled, saved file was empty."
+	msgPreserveFileLocation    = "A copy of your changes has been stored to %s\n"
 
 	defaultInvalidFn = func(e error) error {
-		fmt.Printf("%s: %v\n", ErrValidationFailed, e)
-		return fmt.Errorf("%s\n", ErrCancelledNoValidChanges)
+		fmt.Printf("%s: %v\n", msgValidationFailed, e)
+		return fmt.Errorf(msgCancelledNoValidChanges)
 	}
-	defaultNoChangesFn    = func() (bool, error) { return true, ErrCancelledNoOrigChanges }
-	defaultEmptyFileFn    = func() (bool, error) { return true, ErrCancelledEmptyFile }
+	defaultNoChangesFn    = func() (bool, error) { return true, fmt.Errorf(msgCancelledNoOrigChanges) }
+	defaultEmptyFileFn    = func() (bool, error) { return true, fmt.Errorf(msgCancelledEmptyFile) }
 	defaultPreserveFileFn = func(data []byte, path string, err error) ([]byte, string, error) {
-		fmt.Printf("A copy of your changes has been stored to %s\n", path)
+		fmt.Printf(msgPreserveFileLocation, path)
 		return data, path, err
 	}
 	defaultCommentChars = []string{"#", "//"}

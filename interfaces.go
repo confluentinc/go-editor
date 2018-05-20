@@ -2,6 +2,9 @@ package editor
 
 import "io"
 
+// Editor launches an instance of the users preferred editor.
+// The editor to use is determined by reading the $VISUAL or $EDITOR environment
+// variables. If neither of these are present, vim or notepad (on Windows) is used.
 type Editor interface {
 	Launch(path string) error
 	LaunchTempFile(prefix string, r io.Reader) ([]byte, string, error)

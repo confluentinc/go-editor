@@ -23,6 +23,7 @@ func init() {
 	}
 }
 
+// BasicEditor launches an editor given by a specific command.
 type BasicEditor struct {
 	Command string
 }
@@ -42,10 +43,7 @@ func (e *BasicEditor) Launch(path string) error {
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
-	if err := cmd.Run(); err != nil {
-		return err
-	}
-	return nil
+	return cmd.Run()
 }
 
 // LaunchTempFile launches the users preferred editor on a temporary file

@@ -3,6 +3,7 @@
 [![Build Status](https://semaphoreci.com/api/v1/codyaray/go-editor/branches/master/shields_badge.svg)](https://semaphoreci.com/codyaray/go-editor)
 ![Release](release.svg)
 [![codecov](https://codecov.io/gh/codyaray/go-editor/branch/master/graph/badge.svg)](https://codecov.io/gh/codyaray/go-editor)
+[![GoReportCard](https://goreportcard.com/badge/github.com/codyaray/go-editor)](https://goreportcard.com/report/github.com/codyaray/go-editor)
 [![GoDoc](https://godoc.org/github.com/codyaray/go-editor?status.svg)](https://godoc.org/github.com/codyaray/go-editor)
 
 Allow your CLI users to edit arbitrary data in their preferred editor.

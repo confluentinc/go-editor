@@ -10,6 +10,8 @@ import (
 	"strings"
 )
 
+type ErrEditing error
+
 var (
 	msgValidationFailed        = "The edited file failed validation"
 	msgCancelledNoValidChanges = "Edit cancelled, no valid changes were saved."
@@ -19,10 +21,10 @@ var (
 
 	defaultInvalidFn = func(e error) error {
 		fmt.Printf("%s: %v\n", msgValidationFailed, e)
-		return fmt.Errorf(msgCancelledNoValidChanges)
+		return ErrEditing(fmt.Errorf(msgCancelledNoValidChanges))
 	}
-	defaultNoChangesFn    = func() (bool, error) { return true, fmt.Errorf(msgCancelledNoOrigChanges) }
-	defaultEmptyFileFn    = func() (bool, error) { return true, fmt.Errorf(msgCancelledEmptyFile) }
+	defaultNoChangesFn    = func() (bool, error) { return true, ErrEditing(fmt.Errorf(msgCancelledNoOrigChanges)) }
+	defaultEmptyFileFn    = func() (bool, error) { return true, ErrEditing(fmt.Errorf(msgCancelledEmptyFile)) }
 	defaultPreserveFileFn = func(data []byte, file string, err error) ([]byte, string, error) {
 		fmt.Printf(msgPreserveFileLocation, file)
 		return data, file, err

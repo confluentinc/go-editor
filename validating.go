@@ -10,6 +10,7 @@ import (
 	"strings"
 )
 
+// ErrEditing represents an editing error
 type ErrEditing error
 
 var (

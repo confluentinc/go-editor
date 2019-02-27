@@ -7,7 +7,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/codyaray/go-editor"
+	"github.com/confluentinc/go-editor"
 )
 
 // Example schema that expects a string prefix match

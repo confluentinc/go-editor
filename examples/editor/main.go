@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/codyaray/go-editor"
+	"github.com/confluentinc/go-editor"
 )
 
 func main() {

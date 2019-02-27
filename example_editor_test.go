@@ -6,7 +6,7 @@ import (
 	"io/ioutil"
 	"os"
 
-	"github.com/codyaray/go-editor"
+	"github.com/confluentinc/go-editor"
 )
 
 func Example_basic() {

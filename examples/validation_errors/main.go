@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/codyaray/go-editor"
+	"github.com/confluentinc/go-editor"
 )
 
 type validationError struct {

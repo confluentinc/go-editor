@@ -1,10 +1,10 @@
 # go-editor
 
-[![Build Status](https://semaphoreci.com/api/v1/codyaray/go-editor/branches/master/shields_badge.svg)](https://semaphoreci.com/codyaray/go-editor)
+[![Build Status](https://semaphoreci.com/api/v1/confluentinc/go-editor/branches/master/shields_badge.svg)](https://semaphoreci.com/confluentinc/go-editor)
 ![Release](release.svg)
-[![codecov](https://codecov.io/gh/codyaray/go-editor/branch/master/graph/badge.svg)](https://codecov.io/gh/codyaray/go-editor)
-[![GoReportCard](https://goreportcard.com/badge/github.com/codyaray/go-editor)](https://goreportcard.com/report/github.com/codyaray/go-editor)
-[![GoDoc](https://godoc.org/github.com/codyaray/go-editor?status.svg)](https://godoc.org/github.com/codyaray/go-editor)
+[![codecov](https://codecov.io/gh/confluentinc/go-editor/branch/master/graph/badge.svg)](https://codecov.io/gh/confluentinc/go-editor)
+[![GoReportCard](https://goreportcard.com/badge/github.com/confluentinc/go-editor)](https://goreportcard.com/report/github.com/confluentinc/go-editor)
+[![GoDoc](https://godoc.org/github.com/confluentinc/go-editor?status.svg)](https://godoc.org/github.com/confluentinc/go-editor)
 
 Allow your CLI users to edit arbitrary data in their preferred editor.
 
@@ -12,7 +12,7 @@ Just like editing messages in `git commit` or resources with `kubectl edit`.
 
 ## Install
 
-    go get github.com/codyaray/go-editor
+    go get github.com/confluentinc/go-editor
 
 ## Usage
 

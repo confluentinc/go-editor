@@ -45,6 +45,6 @@ Simply create a schema and pass it to the editor:
     schema := &mySchema{}
     edit := editor.NewValidatingEditor(schema)
 
-A schema must implement the Schema interface: https://godoc.org/github.com/codyaray/go-editor#Schema
+A schema must implement the Schema interface: https://godoc.org/github.com/confluentinc/go-editor#Schema
 */
 package editor

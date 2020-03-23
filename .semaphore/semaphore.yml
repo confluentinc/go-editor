@@ -25,7 +25,7 @@ blocks:
         - name: netrc
       prologue:
         commands:
-          - sem-version go 1.12
+          - sem-version go 1.9
           - sem-version java 8
           - 'export "GOPATH=$(go env GOPATH)"'
           - 'export "SEMAPHORE_GIT_DIR=${GOPATH}/src/github.com/confluentinc/${SEMAPHORE_PROJECT_NAME}"'

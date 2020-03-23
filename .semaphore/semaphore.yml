@@ -41,7 +41,6 @@ blocks:
           commands:
             - make deps ARGS=--vendor-only
             - make test
-            - make codecov-upload
             - make release-ci
       epilogue:
         commands:

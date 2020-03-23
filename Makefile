@@ -84,6 +84,9 @@ test:
 	@golint -set_exit_status `go list ./... | grep -v /vendor/`
 	@go vet ./...
 	@make coverage
+ifdef CI
+	@curl -s https://codecov.io/bash | bash
+endif
 
 release: get-release-image commit-release tag-release
 
@@ -93,7 +96,3 @@ ifeq ($(BRANCH_NAME),master)
 else
 	true
 endif
-
-.PHONY: codecov-upload
-codecov-upload:
-	bash <(curl -s https://codecov.io/bash)

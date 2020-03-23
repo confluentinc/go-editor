@@ -7,11 +7,6 @@ agent:
 blocks:
   - name: "Build, Test, Release"
     task:
-      env_vars:
-        # Set maven to use a local directory. This is required for
-        # the cache util. It must be set in all blocks.
-        - name: SEMAPHORE_TRIGGER_SOURCE
-          value: push
       secrets:
         - name: semaphore-secrets-global
         - name: artifactory-docker-helm
@@ -21,12 +16,9 @@ blocks:
         - name: netrc
         - name: ssh_config
         - name: gitconfig
-        - name: maven-settings
-        - name: netrc
       prologue:
         commands:
-          - sem-version go 1.9
-          - sem-version java 8
+          - sem-version go 1.12
           - 'export "GOPATH=$(go env GOPATH)"'
           - 'export "SEMAPHORE_GIT_DIR=${GOPATH}/src/github.com/confluentinc/${SEMAPHORE_PROJECT_NAME}"'
           - 'export "PATH=${GOPATH}/bin:${PATH}"'

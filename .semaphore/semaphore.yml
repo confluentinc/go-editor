@@ -1,0 +1,39 @@
+version: v1.0
+name: go-editor
+agent:
+  machine:
+    type: e1-standard-2
+    os_image: ubuntu1804
+blocks:
+  - name: "Build, Test, Release"
+    task:
+      secrets:
+        - name: semaphore-secrets-global
+        - name: artifactory-docker-helm
+        - name: testbreak-reporting
+        - name: codecov-token-go-editor
+        - name: ssh_id_rsa
+        - name: netrc
+        - name: ssh_config
+        - name: gitconfig
+      prologue:
+        commands:
+          - sem-version go 1.12
+          - 'export "GOPATH=$(go env GOPATH)"'
+          - 'export "SEMAPHORE_GIT_DIR=${GOPATH}/src/github.com/confluentinc/${SEMAPHORE_PROJECT_NAME}"'
+          - 'export "PATH=${GOPATH}/bin:${PATH}"'
+          - 'mkdir -vp "${SEMAPHORE_GIT_DIR}" "${GOPATH}/bin"'
+          - git config --global url."git@github.com:".insteadOf "https://github.com/"
+          - chmod 400 ~/.ssh/id_rsa
+          - export SEMAPHORE_CACHE_DIR=/home/semaphore
+          - checkout
+          - source /home/semaphore/.testbreak/setup.sh
+      jobs:
+        - name: Setup, test, release
+          commands:
+            - make deps ARGS=--vendor-only
+            - make test
+            - make release-ci
+      epilogue:
+        commands:
+          - source /home/semaphore/.testbreak/after.sh

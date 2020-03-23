@@ -62,7 +62,7 @@ commit-release:
 	git commit -m "$(BUMPED_VERSION): $(BUMP) version bump [ci skip]"
 
 deps:
-	@which golint 2>/dev/null || go get -u github.com/golang/lint/golint
+	@which golint 2>/dev/null || go get -u golang.org/x/lint/golint
 
 coverage:
       ifdef CI
@@ -79,10 +79,16 @@ coverage:
       endif
 
 test:
+ifndef CI
+	#This is broken on sem2 / go 1.9
 	@gofmt -w .
+endif
 	@golint -set_exit_status `go list ./... | grep -v /vendor/`
 	@go vet ./...
 	@make coverage
+ifdef CI
+	@curl -s https://codecov.io/bash | bash
+endif
 
 release: get-release-image commit-release tag-release
 

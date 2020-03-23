@@ -79,7 +79,8 @@ coverage:
       endif
 
 test:
-	@gofmt -w .
+	#This is broken on sem2 / go 1.9
+	#@gofmt -w .
 	@golint -set_exit_status `go list ./... | grep -v /vendor/`
 	@go vet ./...
 	@make coverage

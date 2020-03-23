@@ -92,3 +92,7 @@ ifeq ($(BRANCH_NAME),master)
 else
 	true
 endif
+
+.PHONY: codecov-upload
+codecov-upload:
+	bash <(curl -s https://codecov.io/bash)

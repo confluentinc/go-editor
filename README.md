@@ -1,6 +1,6 @@
 # go-editor
 
-[![Build Status](https://semaphoreci.com/api/v1/confluentinc/go-editor/branches/master/shields_badge.svg)](https://semaphoreci.com/confluentinc/go-editor)
+[![Build Status](https://confluentinc.semaphoreci.com/badges/go-editor.svg?style=shields&key=33117e69-c18d-479e-86dc-12662827185c)](https://semaphoreci.com/confluentinc/go-editor)
 ![Release](release.svg)
 [![codecov](https://codecov.io/gh/confluentinc/go-editor/branch/master/graph/badge.svg)](https://codecov.io/gh/confluentinc/go-editor)
 [![GoReportCard](https://goreportcard.com/badge/github.com/confluentinc/go-editor)](https://goreportcard.com/report/github.com/confluentinc/go-editor)

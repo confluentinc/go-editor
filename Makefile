@@ -1,6 +1,10 @@
 _empty :=
 _space := $(_empty) $(empty)
 
+include ./mk-include/cc-begin.mk
+include ./mk-include/cc-vault.mk
+include ./mk-include/cc-end.mk
+
 # Default to patch release
 BUMP ?= auto
 DEFAULT_BUMP ?= minor

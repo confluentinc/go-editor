@@ -90,9 +90,6 @@ endif
 	@golint -set_exit_status `go list ./... | grep -v /vendor/`
 	@go vet ./...
 	@make coverage
-ifdef CI
-	@curl -s https://codecov.io/bash | bash
-endif
 
 release: get-release-image commit-release tag-release
 

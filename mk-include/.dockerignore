@@ -1,9 +1,0 @@
-vendor
-.git
-.gomodcache/
-bin/
-helm-*.tar.gz
-linux-amd64/
-.semaphore-*
-charts/
-terraform/

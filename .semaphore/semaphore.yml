@@ -8,7 +8,7 @@ blocks:
   - name: "Build, Test, Release"
     task:
       secrets:
-        - name: vault_sem2_approle_prod
+        - name: vault_sem2_approle
       prologue:
         commands:
           - checkout

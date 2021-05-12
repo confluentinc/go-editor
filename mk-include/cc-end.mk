@@ -1,7 +1,9 @@
+.SECONDEXPANSION:
+
 # Include this file last
 .PHONY: init-ci
 ## Target for CI to setup environment
-init-ci: $(INIT_CI_TARGETS)
+init-ci: $$(INIT_CI_TARGETS)
 
 RELEASE_PRECOMMIT ?=
 RELEASE_POSTCOMMIT ?= $(RELEASE_TARGETS) # set to RELEASE_TARGETS for backwards compatibility
@@ -9,7 +11,7 @@ RELEASE_TARGETS := $(RELEASE_PRECOMMIT) get-release-image commit-release tag-rel
 
 .PHONY: release
 ## Release Project.  See show-args to see what will run
-release: $(RELEASE_TARGETS)
+release: $$(RELEASE_TARGETS)
 ifneq ($(RELEASE_MAKE_TARGETS),)
 	. mk-include/bin/vault-setup
 	$(MAKE) $(MAKE_ARGS) $(RELEASE_MAKE_TARGETS)
@@ -48,15 +50,15 @@ endif
 
 .PHONY: build
 ## Build Project.  See show-args to see what will run
-build: $(BUILD_TARGETS)
+build: $$(BUILD_TARGETS)
 
 .PHONY: test
 ## Test Project.  See show-args to see what will run
-test: $(TEST_TARGETS)
+test: $$(TEST_TARGETS)
 
 .PHONY: clean
 ## Clean Project.  See show-args to see what will run
-clean: $(CLEAN_TARGETS)
+clean: $$(CLEAN_TARGETS)
 
 .PHONY: epilogue-ci
 ## Epilogue (post-build steps for CI).  See show-args to see what will run

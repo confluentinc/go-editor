@@ -106,6 +106,29 @@ CPD_HALCTL_ARGS := --vault-login-path auth/app/devel/login
 CPD_HALCTL_ARGS += --vault-oidc-role halyard-devel
 CPD_HALYARD_INSTALL_SERVICE_ENVS ?= $(CHART_NAME)=cpd
 
+RELEASE_POSTCOMMIT += halyard-cpd-apply-services
+
+.PHONY: halyard-cpd-apply-services
+## Register the new version of the halyard spec with the halyard cpd instance, aka apply -f.
+halyard-cpd-apply-services:
+ifneq ($(wildcard .halyard/*.yaml),)
+ifeq ($(CI),true)
+	$(eval CPD_HAL_TMPDIR := $(shell mktemp -d 2>/dev/null || mktemp -d -t 'halyard'))
+else
+	$(eval CPD_HAL_TMPDIR := $(PWD))
+endif
+	@echo "## Applying version with halyard CPD instance";
+	HALYARD_DEPLOYER_ADDRESS=$(CPD_HALYARD_DEPLOYER_ADDRESS) \
+	HALYARD_RELEASE_ADDRESS=$(CPD_HALYARD_RELEASE_ADDRESS) \
+	HALYARD_RENDERER_ADDRESS=$(CPD_HALYARD_RENDERER_ADDRESS) \
+	HALYARD_INSTALL_SERVICE_ENVS=$(CPD_HALYARD_INSTALL_SERVICE_ENVS) \
+	HALYARD_SOURCE_VERSION=$(BUMPED_CHART_VERSION) \
+	HALCTL_ARGS="$(CPD_HALCTL_ARGS)" \
+	HAL_TMPDIR="$(CPD_HAL_TMPDIR)" \
+	$(MAKE) $(MAKE_ARGS) halyard-apply-services
+endif
+
+
 .PHONY: cpd-deploy-local
 ## Deploy local chart to cpd cluster
 cpd-deploy-local: cpd-update helm-update-repo cpd-priv-create-if-missing

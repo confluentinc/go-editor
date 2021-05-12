@@ -128,7 +128,7 @@ halyard-list-service-version: $(HALYARD_INSTALL_SERVICE_ENVS:%=list.%)
 $(HALYARD_INSTALL_SERVICE_ENVS:%=list.%): $(HOME)/.halctl
 	$(eval svc := $(word 1,$(subst =, ,$(@:list.%=%))))
 	$(eval env := $(word 2,$(subst =, ,$(@:list.%=%))))
-	$(eval src_ver := $(shell git rev-parse --is-inside-work-tree > /dev/null && git describe --contains | grep '^v[0-9]\+.[0-9]\+.[0-9]\+\(~[0-9]+\)\?$$' | cut -d'~' -f1 | cut -c 2-) )
+	$(eval src_ver := $(shell git rev-parse --is-inside-work-tree > /dev/null && git describe --contains | grep '^v[0-9]\+.[0-9]\+.[0-9]\+\(~1\)\?$$' | cut -d'~' -f1 | cut -c 2-) )
 	@echo "Found source version: $(src_ver)"
 	@[[ ! -z "$(src_ver)" ]] || exit 1
 	$(eval halyard_ver := $(shell set -o pipefail && $(HALCTL) release service env ver list $(svc) $(env) | grep $(src_ver) | tr -s ' ' | cut -d ' ' -f 2 | tail -1))
@@ -138,7 +138,7 @@ $(HALYARD_INSTALL_SERVICE_ENVS:%=list.%): $(HOME)/.halctl
 	echo $(halyard_ver) >> $(HAL_TMPDIR)/$(svc)/$(env)
 
 .PHONY: halyard-wait-service-version
-halyard-wait-service-version: $(HALYARD_INSTALL_SERVICE_ENVS:%=wait.%)
+halyard-wait-service-version: halyard-list-service-version $(HALYARD_INSTALL_SERVICE_ENVS:%=wait.%)
 
 # Wait for the source version to be installed, for the service/env specified in 'HALYARD_INSTALL_SERVICE_ENVS'.
 # The service source version is deteremined by 'git describe --contains', representing the new version tag commited after a successful 'release-ci'
@@ -149,17 +149,12 @@ halyard-wait-service-version: $(HALYARD_INSTALL_SERVICE_ENVS:%=wait.%)
 $(HALYARD_INSTALL_SERVICE_ENVS:%=wait.%): $(HOME)/.halctl
 	$(eval svc := $(word 1,$(subst =, ,$(@:wait.%=%))))
 	$(eval env := $(word 2,$(subst =, ,$(@:wait.%=%))))
-	$(eval src_ver := $(shell git rev-parse --is-inside-work-tree > /dev/null && git describe --contains | grep '^v[0-9]\+.[0-9]\+.[0-9]\+~1$$' | cut -d'~' -f1 | cut -c 2-) )
-	@echo "Found source version: $(src_ver)"
-	@[[ ! -z "$(src_ver)" ]] || exit 1
-	$(eval halyard_ver := $(shell set -o pipefail && $(HALCTL) release service env ver list $(svc) $(env) | grep $(src_ver) | tr -s ' ' | cut -d ' ' -f 2 | tail -1))
-	@echo "Found halyard version: $(halyard_ver)"
-	@[[ ! -z "$(halyard_ver)" ]] || exit 1
+	$(eval halyard_ver := $(shell cat $(HAL_TMPDIR)/$(svc)/$(env)))
 	@LOOP_COUNT=0; LOOP_TOTAL=20; LOOP_INTERVAL=30; \
-	until [ $$LOOP_COUNT -eq $$LOOP_TOTAL ] || (echo "waiting version $(src_ver) to be installed..." && $(HALCTL) release service env ver get $(svc) $(env) $(halyard_ver) -o json | jq -r .installStatus[].status 2>&1 | grep -v DONE | wc -l | tr -d ' ' | grep '^0$$'); \
+	until [ $$LOOP_COUNT -eq $$LOOP_TOTAL ] || (echo "waiting halyard version $(halyard_ver) to be installed..." && $(HALCTL) release service env ver get $(svc) $(env) $(halyard_ver) -o json | jq -r .installStatus[].status 2>&1 | grep -v DONE | wc -l | tr -d ' ' | grep '^0$$'); \
 	do $(HALCTL) release service env ver get $(svc) $(env) $(halyard_ver) -o json | jq -r .installStatus; (( LOOP_COUNT=LOOP_COUNT+1 )); [ $$LOOP_COUNT -lt $$LOOP_TOTAL ] && echo "still waiting..." && sleep $$LOOP_INTERVAL; done; \
 	[ $$LOOP_COUNT -lt $$LOOP_TOTAL ] || (echo "Time out on waiting for version to be installed..." && exit 1)
-	@echo "Source version $(src_ver) is installed"
+	@echo "Halyard version $(halyard_ver) is installed"
 
 .PHONY: halyard-install-services
 halyard-install-services: cc-releases update-cc-releases $(HALYARD_INSTALL_SERVICE_ENVS:%=install.%) commit-cc-releases

@@ -19,6 +19,9 @@ from tests.test_utils import *
 def test_version():
     assert_version()
 
+def test_version_filter():
+    assert_filtered_version()
+
 def test_make_show_args():
     output = run_cmd("make show-args")
     assert_in_output(output, ["docker-login-ci install-vault vault-bash-functions cache-docker-base-images gcloud-install cpd-update ci-bin-sem-cache-restore helm-setup-ci",
@@ -61,7 +64,7 @@ def test_make_release():
     output = run_cmd("make release-ci")
     assert_not_in_output(output, ["Changes not staged for commit:",
                                 "recipe for target 'pre-release-check' failed"])
-    assert_in_output(output, ["git add --verbose pom.xml '*/pom.xml'",
+    assert_in_output(output, ["git add --verbose ./pom.xml",
                             "git add release.svg",
                             "docker push confluent-docker.jfrog.io/confluentinc/cc-test-service:latest"])
 

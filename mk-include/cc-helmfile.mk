@@ -8,7 +8,9 @@ HELMFILE_URL := https://github.com/roboll/helmfile/releases/download
 HELMFILES := $(strip $(shell find -type f -name helmfile.yaml -printf '%p '))
 
 INIT_CI_TARGETS += helmfile-install-ci helmdiff-install-ci
-TEST_TARGETS += helmfile-test
+
+# Don't add helmfile-test to TEST_TARGETS since it introduces a potential dependency on Vault prod secrets
+#TEST_TARGETS += helmfile-test
 
 $(CI_BIN)/helmfile:
 	curl -L -s -o - $(HELMFILE_URL)/$(HELMFILE_VERSION)/helmfile_linux_amd64 > $(CI_BIN)/helmfile \
@@ -42,4 +44,4 @@ $(HELMFILES:%=helmfile-test.%):
 helmfile-apply: $(HELMFILES:%=helmfile-apply.%)
 
 $(HELMFILES:%=helmfile-apply.%):
-	helmfile --file $(@:helmfile-apply.%=%) apply
+	helmfile --file $(@:helmfile-apply.%=%) apply --suppress-diff

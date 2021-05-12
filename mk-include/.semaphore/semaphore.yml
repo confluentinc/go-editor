@@ -9,7 +9,7 @@ auto_cancel:
     when: "true"
 global_job_config:
   secrets:
-    - name: vault_sem2_approle_prod
+    - name: vault_sem2_approle
   env_vars:
     - name: PYTHON_VERSION
       value: "3.7"
@@ -51,9 +51,11 @@ global_job_config:
       - chmod 400 ~/.ssh/id_rsa
       - sudo apt-get update
       - sudo apt-get install -y python3.7-venv
+      - make testbreak-setup
   epilogue:
-    commands:
-      - make testbreak-after
+    on_fail:
+      commands:
+        - make testbreak-after
 blocks:
   - name: Go Docker Test
     dependencies: []
@@ -102,3 +104,6 @@ blocks:
             - make verify-version
             - make upload-binary
             - make release
+      epilogue:
+        commands:
+          - make testbreak-after

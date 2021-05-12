@@ -17,6 +17,9 @@ endif
 # Enable tacking on a timestamp to the versions.
 TS ?=
 
+# Filter version tags
+VERSION_REFS ?= '*'
+
 # For hotfix PRs convert checkout to full clone to make sure git describe can execute properly
 ifneq ($(SEMAPHORE_GIT_BRANCH),$(_empty))
 ifneq ($(shell echo $(SEMAPHORE_GIT_BRANCH) | grep -E '^v[0-9]+.[0-9]+.x'),$(_empty))
@@ -27,8 +30,9 @@ endif
 # make sure master branch version bump always use the global latest version
 ifeq ($(BRANCH_NAME),$(MASTER_BRANCH))
 # cut -d -f equals cut --delimiter= --field, short version is compatible with mac
-LATEST_VERSION := $(shell git ls-remote --tags --refs --sort="v:refname" | \
+LATEST_VERSION := $(shell git ls-remote --tags --refs --sort="v:refname" origin $(VERSION_REFS) | \
 tail -n1 | tr -d " \t\n\r" | cut -d'/' -f3)
+LATEST_VERSION := $(if $(LATEST_VERSION),$(LATEST_VERSION),v0.0.0)
 VERSION_SUFFIX := $(shell git describe --tags --always --dirty | cut -d'-' -s -f2,3,4)
 ifeq ($(VERSION_SUFFIX),$(_empty))
 VERSION := $(LATEST_VERSION)
@@ -99,6 +103,7 @@ show-version:
 	@echo bumped version: $(BUMPED_VERSION)
 	@echo bumped clean version: $(BUMPED_CLEAN_VERSION)
 	@echo version post append: $(VERSION_POST)
+	@echo version refs filter: $(VERSION_REFS)
 	@echo 'release svg: $(RELEASE_SVG)'
 ifeq ($(CI_TEST),true)
 	@echo 'This is under CI test environment, any git push opertaion will be skipped'

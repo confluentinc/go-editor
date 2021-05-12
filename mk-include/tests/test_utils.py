@@ -49,11 +49,7 @@ def assert_file(file_locations):
     for file_location in file_locations:
         assert os.path.exists(file_location) == True
 
-def assert_version():
-    """
-    assert repo version integreity
-    """
-    output = run_cmd("make show-version")
+def extract_version(output):
     clean_version = None
     bumped_clean_version = None
     for line in output.splitlines():
@@ -65,5 +61,23 @@ def assert_version():
             clean_version = line.split(': ')[1]
             match = re.match(r'^\d+\.\d+\.\d+$', clean_version)
             assert match != None
-    assert (version.parse(clean_version) < version.parse(bumped_clean_version)) == True
+    return (clean_version, bumped_clean_version)
+
+def assert_version():
+    """
+    assert repo version integrity
+    """
+    output = run_cmd("make show-version")
+    (clean_version, bumped_clean_version) = extract_version(output)
+    assert (version.parse(clean_version) < version.parse(bumped_clean_version))
+    return
+
+def assert_filtered_version():
+    """
+    assert repo version integrity given a version filter
+    """
+    output = run_cmd("VERSION_REFS='v0.1.*' BRANCH_NAME=master make show-version")
+    (clean_version, bumped_clean_version) = extract_version(output)
+    assert (version.parse(clean_version) == version.parse("v0.1.0"))
+    assert (version.parse(bumped_clean_version) == version.parse("v0.2.0"))
     return

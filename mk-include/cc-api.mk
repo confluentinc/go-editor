@@ -154,6 +154,11 @@ else
 api-lint-break: $(API_LINT_BREAK_OVERRIDE)
 endif
 
+.PHONY: %/lint
+## Lint an API specification with all linters
+%/lint:
+	make $*/yamllint $*/spectral $*/break
+
 .PHONY: %/yamllint
 ## Lint the API against yamllint
 %/yamllint:

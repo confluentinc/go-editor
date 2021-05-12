@@ -65,7 +65,7 @@ mvn-set-bumped-version:
 	$(MVN) versions:set \
 		-DnewVersion=$(BUMPED_CLEAN_VERSION) \
 		-DgenerateBackupPoms=false
-	$(GIT) add --verbose pom.xml '*/pom.xml'
+	$(GIT) add --verbose $(shell find . -name pom.xml -maxdepth 2)
 
 # Other projects have a superstitious dependency on docker-pull-base here
 # instead of letting `docker build` just automatically pull the base image.

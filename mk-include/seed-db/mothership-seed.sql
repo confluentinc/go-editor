@@ -2416,6 +2416,15 @@ ALTER TABLE ONLY feature_requests ALTER COLUMN id SET DEFAULT nextval('feature_r
 CREATE SCHEMA control_plane;
 ALTER SCHEMA control_plane OWNER TO caas;
 
+-- 
+-- Name: policy; Type: TABLE; Schema: control_plane; Owner: caas
+--
+CREATE TABLE control_plane.policy ( 
+    id SERIAL PRIMARY KEY, 
+    policy jsonb DEFAULT '{}'::jsonb
+);
+ALTER TABLE control_plane.policy OWNER to caas;
+
 --
 -- Name: upgrade_request; Type: TABLE; Schema: control_plane; Owner: caas
 --
@@ -2430,7 +2439,9 @@ CREATE TABLE control_plane.upgrade_request (
     options jsonb DEFAULT '{}'::jsonb, -- future support for options/flags like dry run
     status text NOT NULL,
     status_detail text,
-    operation text DEFAULT 'UPGRADE'
+    operation text DEFAULT 'UPGRADE',
+    policy_id INTEGER,
+    FOREIGN KEY (policy_id) references control_plane.policy (id)
 );
 ALTER TABLE control_plane.upgrade_request OWNER TO caas;
 
@@ -2737,14 +2748,12 @@ VALUES
     ('k8s6', 'nr-5', '{"name": "k8s6.centralus", "caas_version": "0.6.10", "is_schedulable": true, "img_pull_policy": "IfNotPresent"}', now(), now());
 
 
--- The RBAC tables are maintained here: https://github.com/confluentinc/metadata-service/blob/master/rbac-db/src/main/resources/postgres/rbac_schema.sql
+-- The RBAC tables are maintained here: https://github.com/confluentinc/metadata-service/blob/master/rbac-db/src/test/resources/rbac_schema_postgres.sql
 -- See https://github.com/confluentinc/metadata-service/blob/master/adrs/0004-cloud-rbac-db-schema-location.md
 
 --
 -- Name: rbac; Type: SCHEMA; Schema: -; Owner: cc_rbac_api
 --
-
-CREATE USER cc_rbac_api;
 
 CREATE SCHEMA rbac;
 
@@ -2937,6 +2946,7 @@ GRANT USAGE ON SCHEMA control_plane TO cc_cluster_upgrader;
 GRANT ALL PRIVILEGES ON TABLE control_plane.upgrade_request TO cc_cluster_upgrader;
 GRANT ALL PRIVILEGES ON TABLE control_plane.upgrade_task TO cc_cluster_upgrader;
 GRANT ALL PRIVILEGES ON TABLE control_plane.skip_upgrade_rules TO cc_cluster_upgrader;
+GRANT ALL PRIVILEGES ON TABLE control_plane.policy TO cc_cluster_upgrader;
 GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA control_plane TO cc_cluster_upgrader;
 
 GRANT USAGE ON SCHEMA deployment TO GROUP cc_cluster_upgrader;
@@ -2947,19 +2957,6 @@ GRANT ALL PRIVILEGES ON TABLE deployment.physical_cluster TO cc_cluster_upgrader
 --
 -- Role cc_marketplace_service permission
 --
-GRANT ALL PRIVILEGES ON SCHEMA deployment TO cc_marketplace_service;
-GRANT ALL PRIVILEGES ON SCHEMA rbac TO cc_marketplace_service;
-GRANT ALL PRIVILEGES ON SCHEMA control_plane TO cc_marketplace_service;
-GRANT ALL PRIVILEGES ON SCHEMA public TO cc_marketplace_service;
-GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA deployment TO cc_marketplace_service;
-GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA rbac TO cc_marketplace_service;
-GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA control_plane TO cc_marketplace_service;
-GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO cc_marketplace_service;
-GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA deployment TO cc_marketplace_service;
-GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA rbac TO cc_marketplace_service;
-GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA control_plane TO cc_marketplace_service;
-GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO cc_marketplace_service;
-
 
 ------------------------------------------------------------
 ------------------------------------------------------------
@@ -3046,15 +3043,12 @@ GRANT ALL PRIVILEGES ON TABLE deployment.support_plan_history_id_seq TO cc_suppo
 --
 
 GRANT ALL PRIVILEGES ON SCHEMA deployment TO cc_usage_feedback_connector;
-GRANT ALL PRIVILEGES ON SCHEMA rbac TO cc_usage_feedback_connector;
 GRANT ALL PRIVILEGES ON SCHEMA control_plane TO cc_usage_feedback_connector;
 GRANT ALL PRIVILEGES ON SCHEMA public TO cc_usage_feedback_connector;
 GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA deployment TO cc_usage_feedback_connector;
-GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA rbac TO cc_usage_feedback_connector;
 GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA control_plane TO cc_usage_feedback_connector;
 GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO cc_usage_feedback_connector;
 GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA deployment TO cc_usage_feedback_connector;
-GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA rbac TO cc_usage_feedback_connector;
 GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA control_plane TO cc_usage_feedback_connector;
 GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO cc_usage_feedback_connector;
 

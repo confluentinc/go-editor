@@ -18,6 +18,9 @@ from tests.test_utils import *
 def test_version():
     assert_version()
 
+def test_version_filter():
+    assert_filtered_version()
+
 def test_make_show_args():
     output = run_cmd("make show-args")
     assert_in_output(output, ["docker-login-ci install-vault vault-bash-functions deps cache-docker-base-images gcloud-install cpd-update helm-setup-ci",

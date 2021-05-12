@@ -3,6 +3,7 @@ _space := $(_empty) $(empty)
 
 include ./mk-include/cc-begin.mk
 include ./mk-include/cc-vault.mk
+include ./mk-include/cc-testbreak.mk
 include ./mk-include/cc-end.mk
 
 # Default to patch release

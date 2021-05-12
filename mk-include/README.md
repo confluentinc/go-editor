@@ -166,6 +166,10 @@ in your toplevel Makefile. The default sync version will be master which is the 
 ```shell
 MK_INCLUDE_UPDATE_VERSION := <tag>
 ```
+GITHUB token is required for gh cli, so you might need to get the right credentials to export github token.
+```
+. vault-sem-get-secret semaphore-secrets-global
+```
 
 ### Auto Merge
 Leverage gh cli, cc-mk-include now support auto merge, add
@@ -226,6 +230,24 @@ To add the github PR templates to your repo
 make add-github-templates
 ```
 
+## LaunchDarkly Code References
+
+To generate and upload feature flag code references, you can include the `cc-launchdarkly.mk` file in your project Makefile:
+
+```
+include ./mk-include/cc-launchdarkly.mk
+```
+
+This script will install LaunchDarkly's code ref tool from [github](https://github.com/launchdarkly/ld-find-code-refs), and run it as a release target.
+
+This tool requires API tokens from LaunchDarkly, which are stored in Vault. Include the following line in your Semaphore configuration file (`.semaphore/semaphore.yml`) to add the token as an environment variable:
+
+```
+. vault-sem-get-secret v1/ci/kv/service-foundations/cc-mk-include
+```
+
+Once this target successfully runs, we can navigate to the Code References tab for a feature flag, and see a list of references to the git codebase that uses this flag.
+
 ## Developing
 
 If you're developing an app that uses cc-mk-include or needs to extend it, it's useful
@@ -259,6 +281,48 @@ This also shows the full list of supported extension points (`INIT_CI_TARGETS`, 
 
 Applications themselves may also use these extension points; for example, you can append
 your custom `clean-myapp` target to `CLEAN_TARGETS` to invoke as part of `make clean`.
+
+```
+SERVICE_NAME := myapp
+CLEAN_TARGETS += clean-myapp
+
+include ./mk-include/cc-begin.mk
+include ./mk-include/cc-api.mk
+include ./mk-include/cc-semver.mk
+include ./mk-include/cc-end.mk
+
+.PHONY: clean-myapp
+clean-myapp:
+  rm some/special/file
+```
+Running `make show-args` will now show your new task
+```
+$ make show-args | grep CLEAN
+CLEAN_TARGETS:        clean-myapp  api-clean
+```
+
+If you need to _append_ your target to this list to run after the others, you can do that by
+adding it after the mk-include imports, for example
+```
+SERVICE_NAME := myapp
+
+include ./mk-include/cc-begin.mk
+include ./mk-include/cc-semver.mk
+include ./mk-include/cc-api.mk
+include ./mk-include/cc-end.mk
+
+CLEAN_TARGETS += clean-myapp
+
+.PHONY: clean-myapp
+clean-myapp:
+  rm some/special/file
+```
+
+Running `make show-args` will show the order these will actually be invoked:
+```
+$ make show-args | grep CLEAN
+CLEAN_TARGETS:        api-clean clean-myapp
+```
 
 We also expose a small number of override points for special cases (e.g., `BUILD_DOCKER_OVERRIDE`)
 but these should be rather rare.

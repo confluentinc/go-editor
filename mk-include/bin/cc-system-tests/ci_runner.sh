@@ -80,6 +80,9 @@ case "${BRANCH_NAME}" in
         # optionally push code changes to cpd branch
         promote master cpd
       fi
+      for br in ${EXTRA_BRANCH_TO_PROMOTE_FROM_MASTER}; do
+        promote master $br
+      done
     else
       echo 'make vet lint-go failed'
       exit 1

@@ -30,7 +30,6 @@ blocks:
           - 'mkdir -vp "${SEMAPHORE_GIT_DIR}" "${GOPATH}/bin"'
           - git config --global url."git@github.com:".insteadOf "https://github.com/"
           - export SEMAPHORE_CACHE_DIR=/home/semaphore
-          - source /home/semaphore/.testbreak/setup.sh
       jobs:
         - name: Setup, test, release
           commands:
@@ -39,4 +38,4 @@ blocks:
             - make release-ci
       epilogue:
         commands:
-          - source /home/semaphore/.testbreak/after.sh
+          - make testbreak-after

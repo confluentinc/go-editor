@@ -23,7 +23,7 @@ blocks:
           - . vault-sem-get-secret gitconfig
           - chmod 400 ~/.ssh/id_rsa
           - make init-ci
-          - sem-version go 1.12
+          - sem-version go 1.16.15
           - 'export "GOPATH=$(go env GOPATH)"'
           - 'export "SEMAPHORE_GIT_DIR=${GOPATH}/src/github.com/confluentinc/${SEMAPHORE_PROJECT_NAME}"'
           - 'export "PATH=${GOPATH}/bin:${PATH}"'

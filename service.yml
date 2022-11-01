@@ -1,6 +1,6 @@
 name: go-editor
-lang: unknown
-lang_version: unknown
+lang: go
+lang_version: 1.16.15
 git:
   enable: true
 github:
@@ -8,8 +8,3 @@ github:
   repo_name: confluentinc/go-editor
 semaphore:
   enable: true
-  pipeline_enable: false
-  triggers:
-  - tags
-  - branches
-  branches: []

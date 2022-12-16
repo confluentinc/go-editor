@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"os"
 	"strings"
 	"testing"
@@ -97,7 +96,7 @@ func TestBasicEditor_LaunchTempFile(t *testing.T) {
 				if !strings.Contains(file, tt.args.prefix) {
 					t.Errorf("BasicEditor.LaunchTempFile() file = %v, wantPrefix = %v", file, tt.args.prefix)
 				}
-				actual, err := ioutil.ReadFile(file)
+				actual, err := os.ReadFile(file)
 				if err != nil {
 					t.Errorf("BasicEditor.LaunchTempFile() unable to read temp file: %s", file)
 				}

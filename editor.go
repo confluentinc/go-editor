@@ -2,7 +2,6 @@ package editor
 
 import (
 	"io"
-	"io/ioutil"
 	"os"
 	"os/exec"
 	"runtime"
@@ -69,7 +68,7 @@ func launch(command, file string) error {
 //
 // A file may be present even when an error is returned. Please clean it up.
 func (e *BasicEditor) LaunchTempFile(prefix string, r io.Reader) ([]byte, string, error) {
-	f, err := ioutil.TempFile("", prefix)
+	f, err := os.CreateTemp("", prefix)
 	if err != nil {
 		return nil, "", err
 	}
@@ -91,6 +90,6 @@ func (e *BasicEditor) LaunchTempFile(prefix string, r io.Reader) ([]byte, string
 		return nil, f.Name(), err
 	}
 
-	bytes, err := ioutil.ReadFile(f.Name())
+	bytes, err := os.ReadFile(f.Name())
 	return bytes, f.Name(), err
 }

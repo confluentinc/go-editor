@@ -2,9 +2,7 @@ package editor
 
 import (
 	"bytes"
-	//"io"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"reflect"
 	"testing"
@@ -184,7 +182,7 @@ func TestValidatingEditor_LaunchTempFile(t *testing.T) {
 				if editCount >= len(tt.args.edited) {
 					return fmt.Errorf("EDITOR_NEVER_EXITED")
 				}
-				err := ioutil.WriteFile(file, []byte(tt.args.edited[editCount]), 0777)
+				err := os.WriteFile(file, []byte(tt.args.edited[editCount]), 0777)
 				editCount++
 				return err
 			}
@@ -307,7 +305,7 @@ func TestValidatingEditor_isEmpty(t *testing.T) {
 				e.CommentChars = tt.args.comments
 			}
 			e.LaunchFn = func(command, file string) error {
-				return ioutil.WriteFile(file, tt.args.data, 0777)
+				return os.WriteFile(file, tt.args.data, 0777)
 			}
 			got, err := e.isEmpty(tt.args.data)
 			if (err != nil) != tt.wantErr {

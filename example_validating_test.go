@@ -3,7 +3,6 @@ package editor_test
 import (
 	"bytes"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"strings"
 
@@ -28,7 +27,7 @@ func Example_validating() {
 
 	// Simulate user making changes
 	edit.LaunchFn = func(command, file string) error {
-		return ioutil.WriteFile(file, []byte("something else here"), 0777)
+		return os.WriteFile(file, []byte("something else here"), 0777)
 	}
 
 	obj := bytes.NewBufferString("something else")

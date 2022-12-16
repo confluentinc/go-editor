@@ -1,10 +1,6 @@
 # go-editor
 
-[![Build Status](https://confluentinc.semaphoreci.com/badges/go-editor.svg?style=shields&key=33117e69-c18d-479e-86dc-12662827185c)](https://semaphoreci.com/confluentinc/go-editor)
-![Release](release.svg)
-[![codecov](https://codecov.io/gh/confluentinc/go-editor/branch/master/graph/badge.svg)](https://codecov.io/gh/confluentinc/go-editor)
-[![GoReportCard](https://goreportcard.com/badge/github.com/confluentinc/go-editor)](https://goreportcard.com/report/github.com/confluentinc/go-editor)
-[![GoDoc](https://godoc.org/github.com/confluentinc/go-editor?status.svg)](https://godoc.org/github.com/confluentinc/go-editor)
+[![Go Reference](https://pkg.go.dev/badge/github.com/confluentinc/go-editor.svg)](https://pkg.go.dev/github.com/confluentinc/go-editor)
 
 Allow your CLI users to edit arbitrary data in their preferred editor.
 

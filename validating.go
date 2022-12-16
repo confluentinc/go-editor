@@ -5,7 +5,6 @@ import (
 	"bytes"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"os"
 	"strings"
 )
@@ -91,7 +90,7 @@ func (e *ValidatingEditor) LaunchTempFile(prefix string, obj io.Reader) ([]byte,
 		err      error
 	)
 
-	originalObj, err := ioutil.ReadAll(obj)
+	originalObj, err := io.ReadAll(obj)
 	if err != nil {
 		return nil, "", err
 	}

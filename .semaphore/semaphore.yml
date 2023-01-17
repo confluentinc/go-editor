@@ -44,7 +44,7 @@ blocks:
           commands:
             - checkout
             - wget https://go.dev/dl/go$(cat .go-version).darwin-amd64.tar.gz
-            - tar -xvf go$(cat .go-version).darwin-amd64.tar.gz -C /usr/local
+            - sudo tar -xvf go$(cat .go-version).darwin-amd64.tar.gz -C /usr/local
             - go env GOPATH
             - go env GOROOT
 

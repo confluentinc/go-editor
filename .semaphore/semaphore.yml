@@ -44,7 +44,7 @@ blocks:
             - wget https://go.dev/dl/go$(cat .go-version).darwin-amd64.tar.gz
             - sudo tar -xf go$(cat .go-version).darwin-amd64.tar.gz -C /usr/local
             - export PATH=$PATH:/usr/local/go/bin
-            - export PATH=$PATH:$(go env GOPATH)
+            - export PATH=$PATH:$(go env GOPATH)/bin
 
             - make test
       epilogue:

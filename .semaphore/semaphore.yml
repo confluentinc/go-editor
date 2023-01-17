@@ -22,8 +22,6 @@ blocks:
           commands:
             - checkout
             - sem-version go $(cat .go-version)
-            - echo $GOROOT
-            - echo $GOPATH
 
             - make lint
             - make test
@@ -46,8 +44,7 @@ blocks:
             - wget https://go.dev/dl/go$(cat .go-version).darwin-amd64.tar.gz
             - sudo tar -xf go$(cat .go-version).darwin-amd64.tar.gz -C /usr/local
             - export PATH=$PATH:/usr/local/go/bin
-            - go env GOPATH
-            - go env GOROOT
+            - export PATH=$PATH:$(go env GOPATH)
 
             - make test
       epilogue:

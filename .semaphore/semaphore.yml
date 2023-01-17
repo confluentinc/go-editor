@@ -43,9 +43,8 @@ blocks:
         - name: darwin/amd64
           commands:
             - checkout
-            - curl https://go.dev/dl/go$(cat .go-version).darwin-amd64.tar.gz -o go.tar.gz
-            - file go.tar.gz
-            - tar -xvzf go.tar.gz -C /usr/local
+            - wget https://go.dev/dl/go$(cat .go-version).darwin-amd64.tar.gz
+            - tar -xvf go$(cat .go-version).darwin-amd64.tar.gz -C /usr/local
             - go env GOPATH
             - go env GOROOT
 

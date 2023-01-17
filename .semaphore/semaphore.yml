@@ -20,11 +20,9 @@ blocks:
       jobs:
         - name: linux/amd64
           commands:
-            # Set up Go
             - checkout
             - sem-version go $(cat .go-version)
 
-            # Run tests
             - make lint
             - make test
       epilogue:
@@ -42,13 +40,11 @@ blocks:
       jobs:
         - name: darwin/amd64
           commands:
-            # Set up Go
             - checkout
             - wget https://go.dev/dl/go$(cat .go-version).darwin-amd64.tar.gz
             - tar -xvf go$(cat .go-version).darwin-amd64.tar.gz
             - export PATH=$PATH:go/bin/
 
-            # Run tests
             - make test
       epilogue:
         always:

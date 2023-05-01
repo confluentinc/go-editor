@@ -3,15 +3,15 @@ Package editor allows your CLI users to edit arbitrary data in their preferred e
 
 It's just like editing messages in "git commit" or resources with "kubectl edit".
 
-Existing File
+# Existing File
 
 The most basic usage is to prompt the user to edit an existing file. This may
 be useful to edit the application configuration or a system file, for example.
 
-    edit := editor.NewEditor()
-    err := edit.Launch("/etc/bashrc")
+	edit := editor.NewEditor()
+	err := edit.Launch("/etc/bashrc")
 
-Arbitrary Data
+# Arbitrary Data
 
 Most of the time, the data you want your user to edit isn't in an local file.
 In these cases, if you can represent your data in a human editable format
@@ -34,7 +34,7 @@ This enables your CLI to validate the edited data and prompt the user to
 continue editing where they left off, rather than starting over. And if
 that's what you want...
 
-Input Validation
+# Input Validation
 
 If you would like to validate the edited data, use a ValidatingEditor instead.
 This will prompt the user to continue editing until validation succeeds or
@@ -42,8 +42,8 @@ the edit is cancelled.
 
 Simply create a schema and pass it to the editor:
 
-    schema := &mySchema{}
-    edit := editor.NewValidatingEditor(schema)
+	schema := &mySchema{}
+	edit := editor.NewValidatingEditor(schema)
 
 A schema must implement the Schema interface: https://godoc.org/github.com/confluentinc/go-editor#Schema
 */

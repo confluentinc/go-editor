@@ -1,2 +1,37 @@
 coverage.txt
 
+
+#
+# BEGIN managed content - any manual changes below this block will be discarded
+#
+
+#
+# Go Gitignore
+#
+
+something
+#
+# Global/macOS Gitignore
+#
+
+something
+#
+# Global/JetBrains Gitignore
+#
+
+something
+#
+# Global/Vim Gitignore
+#
+
+something
+#
+# Global/Emacs Gitignore
+#
+
+something
+# ServiceBot work directory
+.servicebot/*
+
+!/.github/
+!/.github/**

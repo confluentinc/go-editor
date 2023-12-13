@@ -1,7 +1,7 @@
 .PHONY: lint
 lint:
-	go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.50.1
-	golangci-lint run --timeout=10m
+	go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.55.2 && \
+	golangci-lint run
 
 .PHONY: test
 test:

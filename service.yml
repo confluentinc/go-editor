@@ -1,5 +1,6 @@
 name: go-editor
 lang: go
+lang_version: "1.21.4"
 git:
   enable: true
   hooks:

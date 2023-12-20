@@ -6,7 +6,7 @@ lint:
 .PHONY: test
 test:
 ifdef CI
-	go install gotest.tools/gotestsum@v1.8.2
+	go install gotest.tools/gotestsum@v1.8.2 && \
 	gotestsum --junitfile test-report.xml -- -v ./...
 else
 	go test -v ./...

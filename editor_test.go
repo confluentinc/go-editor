@@ -113,7 +113,7 @@ func TestBasicEditor_LaunchTempFile(t *testing.T) {
 
 func getCatCommand() string {
 	if runtime.GOOS == "windows" {
-		return "Get-Content"
+		return "type"
 	} else {
 		return "cat"
 	}

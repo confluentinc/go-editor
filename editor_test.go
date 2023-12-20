@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"runtime"
 	"strings"
 	"testing"
 )
@@ -19,18 +20,21 @@ func TestBasicEditor_LaunchTempFile(t *testing.T) {
 		original io.Reader
 	}
 	tests := []struct {
-		name     string
-		fields   fields
-		args     args
-		wantData []byte
-		wantFile bool
-		wantErr  bool
-		wantDisk []byte
+		name        string
+		fields      fields
+		args        args
+		wantData    []byte
+		wantFile    bool
+		wantErr     bool
+		wantDisk    []byte
+		skipWindows bool
 	}{
 		{
 			name: "successful launch",
 			fields: fields{
-				LaunchFn: func(command, file string) error { return nil },
+				LaunchFn: func(command, file string) error {
+					return nil
+				},
 			},
 			args: args{
 				prefix:   "prefix",
@@ -44,7 +48,9 @@ func TestBasicEditor_LaunchTempFile(t *testing.T) {
 		{
 			name: "failed launch",
 			fields: fields{
-				LaunchFn: func(command, file string) error { return fmt.Errorf("failure to launch") },
+				LaunchFn: func(command, file string) error {
+					return fmt.Errorf("failure to launch")
+				},
 			},
 			args: args{
 				prefix:   "prefix",
@@ -56,21 +62,24 @@ func TestBasicEditor_LaunchTempFile(t *testing.T) {
 			wantDisk: []byte("some random text"),
 		},
 		{
-			name: "execs command",
-			fields: fields{
-				Command: "cat",
-			},
+			name:   "execs command",
+			fields: fields{Command: "cat"},
 			args: args{
 				prefix:   "prefix",
 				original: bytes.NewBufferString("some random text\n"),
 			},
-			wantData: []byte("some random text\n"),
-			wantFile: true,
-			wantErr:  false,
-			wantDisk: []byte("some random text\n"),
+			wantData:    []byte("some random text\n"),
+			wantFile:    true,
+			wantErr:     false,
+			wantDisk:    []byte("some random text\n"),
+			skipWindows: true,
 		},
 	}
 	for _, tt := range tests {
+		if runtime.GOOS == "windows" && tt.skipWindows {
+			continue
+		}
+
 		t.Run(tt.name, func(t *testing.T) {
 			e := NewEditor()
 			e.Command = tt.fields.Command

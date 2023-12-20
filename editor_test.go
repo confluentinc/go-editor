@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"runtime"
 	"strings"
 	"testing"
 )
@@ -30,7 +31,9 @@ func TestBasicEditor_LaunchTempFile(t *testing.T) {
 		{
 			name: "successful launch",
 			fields: fields{
-				LaunchFn: func(command, file string) error { return nil },
+				LaunchFn: func(command, file string) error {
+					return nil
+				},
 			},
 			args: args{
 				prefix:   "prefix",
@@ -44,7 +47,9 @@ func TestBasicEditor_LaunchTempFile(t *testing.T) {
 		{
 			name: "failed launch",
 			fields: fields{
-				LaunchFn: func(command, file string) error { return fmt.Errorf("failure to launch") },
+				LaunchFn: func(command, file string) error {
+					return fmt.Errorf("failure to launch")
+				},
 			},
 			args: args{
 				prefix:   "prefix",
@@ -56,10 +61,8 @@ func TestBasicEditor_LaunchTempFile(t *testing.T) {
 			wantDisk: []byte("some random text"),
 		},
 		{
-			name: "execs command",
-			fields: fields{
-				Command: "cat",
-			},
+			name:   "execs command",
+			fields: fields{Command: getCatCommand()},
 			args: args{
 				prefix:   "prefix",
 				original: bytes.NewBufferString("some random text\n"),
@@ -105,5 +108,13 @@ func TestBasicEditor_LaunchTempFile(t *testing.T) {
 				}
 			}
 		})
+	}
+}
+
+func getCatCommand() string {
+	if runtime.GOOS == "windows" {
+		return "Get-Content"
+	} else {
+		return "cat"
 	}
 }

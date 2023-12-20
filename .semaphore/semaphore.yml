@@ -21,6 +21,7 @@ blocks:
           commands:
             - checkout
             - sem-version go $(cat .go-version)
+            - export PATH=$(go env GOPATH)/bin:$PATH
             - make lint
             - make test
       epilogue:

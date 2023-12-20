@@ -20,13 +20,14 @@ func TestBasicEditor_LaunchTempFile(t *testing.T) {
 		original io.Reader
 	}
 	tests := []struct {
-		name     string
-		fields   fields
-		args     args
-		wantData []byte
-		wantFile bool
-		wantErr  bool
-		wantDisk []byte
+		name        string
+		fields      fields
+		args        args
+		wantData    []byte
+		wantFile    bool
+		wantErr     bool
+		wantDisk    []byte
+		skipWindows bool
 	}{
 		{
 			name: "successful launch",
@@ -62,18 +63,23 @@ func TestBasicEditor_LaunchTempFile(t *testing.T) {
 		},
 		{
 			name:   "execs command",
-			fields: fields{Command: getCatCommand()},
+			fields: fields{Command: "cat"},
 			args: args{
 				prefix:   "prefix",
 				original: bytes.NewBufferString("some random text\n"),
 			},
-			wantData: []byte("some random text\n"),
-			wantFile: true,
-			wantErr:  false,
-			wantDisk: []byte("some random text\n"),
+			wantData:    []byte("some random text\n"),
+			wantFile:    true,
+			wantErr:     false,
+			wantDisk:    []byte("some random text\n"),
+			skipWindows: true,
 		},
 	}
 	for _, tt := range tests {
+		if runtime.GOOS == "windows" && tt.skipWindows {
+			continue
+		}
+
 		t.Run(tt.name, func(t *testing.T) {
 			e := NewEditor()
 			e.Command = tt.fields.Command
@@ -108,13 +114,5 @@ func TestBasicEditor_LaunchTempFile(t *testing.T) {
 				}
 			}
 		})
-	}
-}
-
-func getCatCommand() string {
-	if runtime.GOOS == "windows" {
-		return "type"
-	} else {
-		return "cat"
 	}
 }

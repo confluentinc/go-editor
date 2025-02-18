@@ -3,6 +3,7 @@ package editor
 import (
 	"bufio"
 	"bytes"
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -21,10 +22,10 @@ var (
 
 	defaultInvalidFn = func(e error) error {
 		fmt.Printf("%s: %v\n", msgValidationFailed, e)
-		return ErrEditing(fmt.Errorf(msgCancelledNoValidChanges))
+		return ErrEditing(errors.New(msgCancelledNoValidChanges))
 	}
-	defaultNoChangesFn    = func() (bool, error) { return true, ErrEditing(fmt.Errorf(msgCancelledNoOrigChanges)) }
-	defaultEmptyFileFn    = func() (bool, error) { return true, ErrEditing(fmt.Errorf(msgCancelledEmptyFile)) }
+	defaultNoChangesFn    = func() (bool, error) { return true, ErrEditing(errors.New(msgCancelledNoOrigChanges)) }
+	defaultEmptyFileFn    = func() (bool, error) { return true, ErrEditing(errors.New(msgCancelledEmptyFile)) }
 	defaultPreserveFileFn = func(data []byte, file string, err error) ([]byte, string, error) {
 		fmt.Printf(msgPreserveFileLocation, file)
 		return data, file, err

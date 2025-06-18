@@ -146,11 +146,16 @@ crashlytics.properties
 crashlytics-build.properties
 fabric.properties
 
-# Editor-based Rest Client
+# Editor-based HTTP Client
 .idea/httpRequests
+http-client.private.env.json
 
 # Android studio 3.1+ serialized cache file
 .idea/caches/build_file_checksums.ser
+
+# Apifox Helper cache
+.idea/.cache/.Apifox_Helper
+.idea/ApifoxUploaderProjectSetting.xml
 
 #
 # Global/Vim Gitignore
@@ -158,7 +163,8 @@ fabric.properties
 
 # Swap
 [._]*.s[a-v][a-z]
-!*.svg  # comment out if you don't need vector files
+# comment out the next line if you don't need vector files
+!*.svg
 [._]*.sw[a-p]
 [._]s[a-rt-v][a-z]
 [._]ss[a-gi-z]
@@ -229,6 +235,8 @@ flycheck_*.el
 # network security
 /network-security.data
 
+# undo-tree
+*.~undo-tree~
 
 #
 # Global/VisualStudioCode Gitignore
@@ -240,14 +248,12 @@ flycheck_*.el
 !.vscode/launch.json
 !.vscode/extensions.json
 !.vscode/*.code-snippets
-
-# Local History for Visual Studio Code
-.history/
+!*.code-workspace
 
 # Built Visual Studio Code Extensions
 *.vsix
 
-/mk-include/
+/mk-include
 /.mk-include-timestamp
 
 /coverage.txt

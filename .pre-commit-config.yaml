@@ -27,5 +27,10 @@ repos:
         always_run: false
       - id: go-mod-tidy
         always_run: false
+
+  - repo: https://github.com/confluentinc/devprod-pre-commit
+    rev: v0.4.0
+    hooks:
+      - id: trufflehog
 fail_fast: false
 exclude: ^.devcontainer/|^charts/|^mk-include/|^node_modules/

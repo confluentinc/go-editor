@@ -1,3 +1,3 @@
 module github.com/confluentinc/go-editor
 
-go 1.24.8
+go 1.24.9

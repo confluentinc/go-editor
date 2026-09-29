@@ -4,8 +4,6 @@ git:
   enable: true
   hooks:
     enable: true
-github:
-  enable: true
 gitignore:
   enable: true
 semaphore:
